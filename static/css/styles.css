@@ -246,6 +246,7 @@ textarea { resize: vertical; }
   justify-content: flex-start;
   gap: 24px;
   padding: 24px clamp(18px, 5vw, 72px);
+  padding-left: 118px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 14px;
@@ -255,7 +256,7 @@ textarea { resize: vertical; }
   display: flex;
   flex-wrap: wrap;
   gap: 10px 42px;
-  padding-left: 86px;
+  padding-left: 0;
   max-width: 100%;
 }
 
@@ -285,5 +286,5 @@ textarea { resize: vertical; }
   .card-grid, .brand-grid, .form-row { grid-template-columns: 1fr; }
   .service-card { min-height: auto; }
   .footer { flex-direction: column; }
-  .footer-credit { padding-left: 82px; gap: 8px 24px; }
+  .footer-credit { padding-left: 0; gap: 8px 24px; }
 }

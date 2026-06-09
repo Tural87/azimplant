@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ site_settings['seo_title_' ~ lang] }}</title>
   <meta name="description" content="{{ site_settings['seo_description_' ~ lang] }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v='20260609-whatsapp-2') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v='20260609-footer-fix-3') }}">
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <script src="{{ url_for('static', filename='js/site.js', v='20260609-whatsapp-2') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/site.js', v='20260609-footer-fix-3') }}" defer></script>
 </head>
 <body>
   {% set t = {
@@ -189,8 +189,8 @@
     </svg>
   </a>
 
-  <footer class="footer">
-    <div class="footer-credit">
+  <footer class="footer" style="padding-left:118px;">
+    <div class="footer-credit" style="padding-left:0;">
       <span>© 2026 {{ site_settings.site_name }}. {{ t.all_rights }}.</span>
       <span>Designed by Tural Quliyev</span>
     </div>

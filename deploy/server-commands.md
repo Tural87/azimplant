@@ -50,13 +50,13 @@ sudo chown -R www-data:www-data instance static/uploads
 
 ```bash
 . .venv/bin/activate
-gunicorn --workers 3 --bind 127.0.0.1:8000 wsgi:application
+gunicorn --workers 3 --bind 127.0.0.1:8001 wsgi:application
 ```
 
 Open another terminal and run:
 
 ```bash
-curl -I http://127.0.0.1:8000/az
+curl -I http://127.0.0.1:8001/az
 ```
 
 Stop the manual Gunicorn process with `Ctrl+C`.

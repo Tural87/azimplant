@@ -18,7 +18,7 @@ Default production path:
 
 Default app port behind Nginx:
 
-- `127.0.0.1:8000`
+- `127.0.0.1:8001`
 
 ## Required production variables
 

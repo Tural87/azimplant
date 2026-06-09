@@ -7,7 +7,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/azimplant
 EnvironmentFile=/var/www/azimplant/.env
-ExecStart=/var/www/azimplant/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 wsgi:application
+ExecStart=/var/www/azimplant/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8001 wsgi:application
 Restart=always
 RestartSec=5
 

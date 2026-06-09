@@ -73,6 +73,9 @@
     {% endwith %}
 
     <section class="hero">
+      <div class="hero-visual">
+        <img src="{{ url_for('static', filename=hero.image) }}" alt="">
+      </div>
       <div class="hero-content">
         <p class="eyebrow">Dental implant solutions</p>
         <h1>{{ t.hero_title_a }} <span>{{ t.hero_title_b }}</span></h1>
@@ -88,15 +91,16 @@
           <span><strong>500+</strong>{{ t.stats_3 }}</span>
         </div>
       </div>
-      <div class="hero-features">
-        {% for item in services[:4] %}
-          <article>
-            <i data-lucide="{{ item.icon }}"></i>
-            <h3>{{ item['title_' ~ lang] }}</h3>
-            <p>{{ item['body_' ~ lang] }}</p>
-          </article>
-        {% endfor %}
-      </div>
+    </section>
+
+    <section class="topic-navigation" aria-label="{{ t.services }}">
+      {% for item in services[:4] %}
+        <a href="#services" class="topic-card">
+          <div><i data-lucide="{{ item.icon }}"></i></div>
+          <h3>{{ item['title_' ~ lang] }}</h3>
+          <p>{{ item['body_' ~ lang] }}</p>
+        </a>
+      {% endfor %}
     </section>
 
     <section class="section about" id="about">

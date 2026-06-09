@@ -214,7 +214,7 @@ p { color: var(--muted); }
 
 .floating-whatsapp {
   position: fixed;
-  left: clamp(18px, 3vw, 32px);
+  right: clamp(18px, 3vw, 32px);
   bottom: clamp(18px, 3vw, 32px);
   z-index: 80;
   display: inline-flex;
@@ -246,7 +246,6 @@ textarea { resize: vertical; }
   justify-content: flex-start;
   gap: 24px;
   padding: 24px clamp(18px, 5vw, 72px);
-  padding-left: 118px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 14px;

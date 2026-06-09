@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import sqlite3
 import smtplib
@@ -105,6 +106,21 @@ def recipient_emails():
     return [item.strip() for item in normalized.split(",") if item.strip()]
 
 
+def safe_google_maps_embed(raw):
+    if not raw:
+        return ""
+    match = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\'][^>]*></iframe>', raw, re.IGNORECASE)
+    if not match:
+        return ""
+    src = match.group(1)
+    if "google.com/maps/embed" not in src and "www.google.com/maps/embed" not in src:
+        return ""
+    return (
+        f'<iframe src="{src}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" '
+        f'allowfullscreen></iframe>'
+    )
+
+
 def send_inquiry_email(data):
     recipients = recipient_emails()
     if not recipients:
@@ -161,7 +177,8 @@ def inject_globals():
     if not DB_PATH.exists():
         return {}
     keys = db_all("select key, value from settings")
-    return {"site_settings": {row["key"]: row["value"] for row in keys}}
+    settings = {row["key"]: row["value"] for row in keys}
+    return {"site_settings": settings, "google_maps_embed": safe_google_maps_embed(settings.get("google_maps_embed", ""))}
 
 
 def init_db():
@@ -247,6 +264,8 @@ def init_db():
             "email": "info@azimplantgroup.com",
             "address_az": "Azərbaycan, Bakı şəh., Sarayevo 12",
             "address_en": "Sarayevo 12, Baku, Azerbaijan",
+            "google_maps_url": "",
+            "google_maps_embed": "",
             "whatsapp_number": "994XXXXXXXXX",
             "notification_emails": "info@azimplantgroup.com",
             "smtp_host": "",

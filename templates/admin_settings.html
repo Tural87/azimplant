@@ -6,7 +6,7 @@
     <div class="form-grid">
       {% for item in settings %}
         {% if item.key != 'logo' and item.key != 'chat_script' %}
-          {% if item.key == 'notification_emails' %}
+          {% if item.key in ['notification_emails', 'google_maps_embed'] %}
             <label>{{ item.key }}<textarea name="{{ item.key }}" rows="4">{{ item.value }}</textarea></label>
           {% elif 'password' in item.key %}
             <label>{{ item.key }}<input type="password" name="{{ item.key }}" value="{{ item.value }}"></label>

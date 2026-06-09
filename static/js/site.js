@@ -8,35 +8,19 @@ window.addEventListener("DOMContentLoaded", () => {
     nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => nav.classList.remove("open")));
   }
 
-  const form = document.querySelector("[data-wa-form]");
-  const waButton = document.querySelector("[data-wa-submit]");
   const waLink = document.querySelector("[data-whatsapp-link]");
-  const number = form?.dataset.waNumber || "";
+  const floatingWhatsApp = document.querySelector("[data-floating-whatsapp]");
+  const defaultText = encodeURIComponent("Salam, Az Implant Group haqqinda melumat almaq isteyirem.");
 
-  function buildWhatsAppUrl() {
-    const data = new FormData(form);
-    const text = [
-      "Az Implant Group muraciet",
-      `Ad: ${data.get("first_name") || ""}`,
-      `Soyad: ${data.get("last_name") || ""}`,
-      `Email: ${data.get("email") || ""}`,
-      `Nomre: ${data.get("phone") || ""}`,
-      `Mesaj: ${data.get("message") || ""}`,
-    ].join("\n");
-    return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
-  }
-
-  if (waButton && form) {
-    waButton.addEventListener("click", () => {
-      if (!form.reportValidity()) return;
-      window.open(buildWhatsAppUrl(), "_blank", "noopener");
-    });
-  }
-
-  if (waLink && number) {
+  if (waLink) {
     waLink.addEventListener("click", (event) => {
       event.preventDefault();
-      window.location.hash = "contact";
+      floatingWhatsApp?.click();
     });
+  }
+
+  if (floatingWhatsApp) {
+    const separator = floatingWhatsApp.href.includes("?") ? "&" : "?";
+    floatingWhatsApp.href = `${floatingWhatsApp.href}${separator}text=${defaultText}`;
   }
 });

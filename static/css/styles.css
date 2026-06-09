@@ -201,11 +201,7 @@ p { color: var(--muted); }
   height: 42px;
   border: 1px solid rgba(255,255,255,.18);
 }
-.contact-actions-panel {
-  display: grid;
-  gap: 16px;
-}
-.contact-form, .whatsapp-form {
+.contact-form {
   display: grid;
   gap: 16px;
   padding: clamp(22px, 4vw, 34px);
@@ -213,11 +209,26 @@ p { color: var(--muted); }
   border-radius: 8px;
   color: var(--ink);
 }
-.contact-form h3, .whatsapp-form h3 { color: var(--ink); }
-.contact-form p, .whatsapp-form p { margin: 0; color: var(--muted); }
-.whatsapp-form {
-  border: 1px solid rgba(223, 39, 52, .22);
+.contact-form h3 { color: var(--ink); }
+.contact-form p { margin: 0; color: var(--muted); }
+
+.floating-whatsapp {
+  position: fixed;
+  right: clamp(18px, 3vw, 32px);
+  bottom: clamp(18px, 3vw, 32px);
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 18px 42px rgba(37, 211, 102, .34);
 }
+.floating-whatsapp:hover { transform: translateY(-2px); }
+.floating-whatsapp svg { width: 30px; height: 30px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 label { display: grid; gap: 7px; color: #526066; font-weight: 700; font-size: 14px; }
 input, textarea {

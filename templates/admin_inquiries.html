@@ -1,0 +1,16 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<section class="admin-section">
+  <h1>Müraciətlər</h1>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tarix</th><th>Ad soyad</th><th>Email</th><th>Nömrə</th><th>Mesaj</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+          <tr><td>{{ row.created_at }}</td><td>{{ row.first_name }} {{ row.last_name }}</td><td>{{ row.email }}</td><td>{{ row.phone }}</td><td>{{ row.message }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

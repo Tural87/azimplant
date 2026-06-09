@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="login-body">
+  <form class="login-card" method="post">
+    <h1>az implant group</h1>
+    <p>Admin panelə giriş</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    <label>Login<input name="username" required autofocus></label>
+    <label>Parol<input type="password" name="password" required></label>
+    <button type="submit">Daxil ol</button>
+    <small>İlkin giriş: admin / admin123</small>
+  </form>
+</body>
+</html>

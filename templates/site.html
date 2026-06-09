@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site_settings['seo_title_' ~ lang] }}</title>
+  <meta name="description" content="{{ site_settings['seo_description_' ~ lang] }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="{{ url_for('static', filename='js/site.js') }}" defer></script>
+</head>
+<body>
+  {% set t = {
+    'az': {
+      'home':'Ana səhifə','about':'Haqqımızda','services':'Fəaliyyət','brands':'Brendlər','contact':'Əlaqə',
+      'cta':'Müraciət et','whatsapp':'WhatsApp','learn':'Ətraflı','why':'Niyə biz?','partners':'Rəsmi brendlər',
+      'contact_title':'Bizimlə əlaqə','contact_text':'Məlumat almaq üçün formanı doldurun və ya WhatsApp ilə birbaşa yazın.',
+      'first':'Ad','last':'Soyad','email':'Email','phone':'Nömrə','message':'Mesaj','send':'Göndər',
+      'wa_send':'WhatsApp-a yaz','admin':'Admin panel','all_rights':'Bütün hüquqlar qorunur'
+    },
+    'en': {
+      'home':'Home','about':'About','services':'Activities','brands':'Brands','contact':'Contact',
+      'cta':'Request info','whatsapp':'WhatsApp','learn':'Learn more','why':'Why us?','partners':'Official brands',
+      'contact_title':'Contact us','contact_text':'Fill the form or contact us directly through WhatsApp.',
+      'first':'First name','last':'Last name','email':'Email','phone':'Phone','message':'Message','send':'Send',
+      'wa_send':'Send to WhatsApp','admin':'Admin panel','all_rights':'All rights reserved'
+    }
+  }[lang] %}
+  {% set other_lang = 'en' if lang == 'az' else 'az' %}
+
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Az Implant Group">
+      <img src="{{ url_for('static', filename=site_settings.logo) }}" alt="Az Implant Group">
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#home">{{ t.home }}</a>
+      <a href="#about">{{ t.about }}</a>
+      <a href="#services">{{ t.services }}</a>
+      <a href="#brands">{{ t.brands }}</a>
+      <a href="#contact">{{ t.contact }}</a>
+    </nav>
+    <div class="header-actions">
+      <a class="lang" href="{{ url_for('site', lang=other_lang) }}">{{ other_lang|upper }}</a>
+      <button class="icon-button menu-toggle" type="button" data-menu-toggle aria-label="Menu"><i data-lucide="menu"></i></button>
+    </div>
+  </header>
+
+  <main id="home">
+    {% set hero = sections.hero %}
+    <section class="hero">
+      <div class="hero-media">
+        <img src="{{ url_for('static', filename=hero.image) }}" alt="">
+      </div>
+      <div class="hero-content">
+        <p class="eyebrow">{{ site_settings.site_name }} / {{ site_settings.tagline }}</p>
+        <h1>{{ hero['title_' ~ lang] }}</h1>
+        <p class="lead">{{ hero['subtitle_' ~ lang] }}</p>
+        <p>{{ hero['body_' ~ lang] }}</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#contact">{{ t.cta }}</a>
+          <a class="button ghost" data-whatsapp-link href="#contact"><i data-lucide="message-circle"></i>{{ t.whatsapp }}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about" id="about">
+      {% set about = sections.about %}
+      <div class="section-grid">
+        <div>
+          <p class="eyebrow">{{ t.about }}</p>
+          <h2>{{ about['title_' ~ lang] }}</h2>
+          <p class="lead">{{ about['subtitle_' ~ lang] }}</p>
+          <p>{{ about['body_' ~ lang] }}</p>
+        </div>
+        <div class="logo-panel">
+          <img src="{{ url_for('static', filename=about.image) }}" alt="Az Implant Group symbol">
+          <strong>11+</strong>
+          <span>{{ 'illik təcrübə' if lang == 'az' else 'years of experience' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section muted" id="services">
+      <div class="section-head">
+        <p class="eyebrow">{{ t.services }}</p>
+        <h2>{{ 'Fəaliyyət istiqamətlərimiz' if lang == 'az' else 'Our activity areas' }}</h2>
+      </div>
+      <div class="card-grid">
+        {% for item in services %}
+          <article class="service-card">
+            <i data-lucide="{{ item.icon }}"></i>
+            <h3>{{ item['title_' ~ lang] }}</h3>
+            <p>{{ item['body_' ~ lang] }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="section" id="brands">
+      <div class="section-head">
+        <p class="eyebrow">{{ t.partners }}</p>
+        <h2>{{ t.brands }}</h2>
+      </div>
+      <div class="brand-grid">
+        {% for brand in brands %}
+          <article class="brand-card">
+            <img src="{{ url_for('static', filename=brand.logo) }}" alt="{{ brand.name }}">
+            <div>
+              <h3>{{ brand.name }}</h3>
+              <p>{{ brand['description_' ~ lang] }}</p>
+              {% if brand.url %}
+                <a href="{{ brand.url }}" target="_blank" rel="noreferrer">{{ t.learn }} <i data-lucide="arrow-up-right"></i></a>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="section split">
+      {% set mission = sections.mission %}
+      <div>
+        <p class="eyebrow">{{ t.why }}</p>
+        <h2>{{ mission['title_' ~ lang] }}</h2>
+        <p>{{ mission['body_' ~ lang] }}</p>
+      </div>
+      <div class="why-list">
+        {% for item in why %}
+          <div class="why-item">
+            <i data-lucide="{{ item.icon }}"></i>
+            <div>
+              <h3>{{ item['title_' ~ lang] }}</h3>
+              <p>{{ item['body_' ~ lang] }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="contact-info">
+        <p class="eyebrow">{{ t.contact }}</p>
+        <h2>{{ t.contact_title }}</h2>
+        <p>{{ t.contact_text }}</p>
+        <div class="contact-lines">
+          <a href="mailto:{{ site_settings.email }}"><i data-lucide="mail"></i>{{ site_settings.email }}</a>
+          <a href="tel:{{ site_settings.phone }}"><i data-lucide="phone"></i>{{ site_settings.phone }}</a>
+          <span><i data-lucide="map-pin"></i>{{ site_settings['address_' ~ lang] }}</span>
+        </div>
+        <div class="socials">
+          {% for key, icon in [('instagram_url','instagram'),('facebook_url','facebook'),('linkedin_url','linkedin'),('youtube_url','youtube'),('tiktok_url','music-2')] %}
+            {% if site_settings[key] %}
+              <a href="{{ site_settings[key] }}" target="_blank" rel="noreferrer" aria-label="{{ icon }}"><i data-lucide="{{ icon }}"></i></a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <form class="contact-form" method="post" action="{{ url_for('inquiry') }}" data-wa-form data-wa-number="{{ site_settings.whatsapp_number }}">
+        <input type="hidden" name="lang" value="{{ lang }}">
+        <div class="form-row">
+          <label>{{ t.first }}<input required name="first_name" autocomplete="given-name"></label>
+          <label>{{ t.last }}<input required name="last_name" autocomplete="family-name"></label>
+        </div>
+        <label>{{ t.email }}<input required type="email" name="email" autocomplete="email"></label>
+        <label>{{ t.phone }}<input required name="phone" autocomplete="tel"></label>
+        <label>{{ t.message }}<textarea required name="message" rows="5"></textarea></label>
+        <div class="form-actions">
+          <button class="button primary" type="submit">{{ t.send }}</button>
+          <button class="button ghost" type="button" data-wa-submit><i data-lucide="message-circle"></i>{{ t.wa_send }}</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 {{ site_settings.site_name }}. {{ t.all_rights }}.</span>
+    <a href="{{ url_for('admin_login') }}">{{ t.admin }}</a>
+  </footer>
+
+  {% if site_settings.chat_script %}
+    {{ site_settings.chat_script|safe }}
+  {% endif %}
+</body>
+</html>

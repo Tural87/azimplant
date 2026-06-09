@@ -1,0 +1,18 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<section class="admin-section">
+  <h1>Sayt ayarları</h1>
+  <form class="admin-form" method="post" enctype="multipart/form-data">
+    <div class="form-grid">
+      {% for item in settings %}
+        {% if item.key != 'logo' and item.key != 'chat_script' %}
+          <label>{{ item.key }}<input name="{{ item.key }}" value="{{ item.value }}"></label>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <label>Logo<input type="file" name="logo" accept="image/*"></label>
+    <label>Online chat script<textarea name="chat_script" rows="8">{{ site_settings.chat_script }}</textarea></label>
+    <button type="submit">Yadda saxla</button>
+  </form>
+</section>
+{% endblock %}

@@ -6,7 +6,13 @@
     <div class="form-grid">
       {% for item in settings %}
         {% if item.key != 'logo' and item.key != 'chat_script' %}
-          <label>{{ item.key }}<input name="{{ item.key }}" value="{{ item.value }}"></label>
+          {% if item.key == 'notification_emails' %}
+            <label>{{ item.key }}<textarea name="{{ item.key }}" rows="4">{{ item.value }}</textarea></label>
+          {% elif 'password' in item.key %}
+            <label>{{ item.key }}<input type="password" name="{{ item.key }}" value="{{ item.value }}"></label>
+          {% else %}
+            <label>{{ item.key }}<input name="{{ item.key }}" value="{{ item.value }}"></label>
+          {% endif %}
         {% endif %}
       {% endfor %}
     </div>

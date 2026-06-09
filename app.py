@@ -1,6 +1,10 @@
 import os
+import shutil
 import sqlite3
+import smtplib
+import subprocess
 import time
+from email.message import EmailMessage
 from functools import wraps
 from pathlib import Path
 
@@ -95,6 +99,63 @@ def setting(key, default=""):
     return row["value"] if row else default
 
 
+def recipient_emails():
+    raw = setting("notification_emails", setting("email", "info@azimplantgroup.com"))
+    normalized = raw.replace(";", ",").replace("\n", ",")
+    return [item.strip() for item in normalized.split(",") if item.strip()]
+
+
+def send_inquiry_email(data):
+    recipients = recipient_emails()
+    if not recipients:
+        return False
+
+    subject = "Az Implant Group - yeni muraciet"
+    body = "\n".join(
+        [
+            "Az Implant Group saytindan yeni muraciet",
+            "",
+            f"Ad: {data['first_name']}",
+            f"Soyad: {data['last_name']}",
+            f"Email: {data['email']}",
+            f"Nomre: {data['phone']}",
+            "",
+            "Mesaj:",
+            data["message"],
+        ]
+    )
+    sender = setting("smtp_from_email", "") or setting("email", "info@azimplantgroup.com")
+    message = EmailMessage()
+    message["Subject"] = subject
+    message["From"] = sender
+    message["To"] = ", ".join(recipients)
+    if data["email"]:
+        message["Reply-To"] = data["email"]
+    message.set_content(body)
+
+    smtp_host = setting("smtp_host", "").strip()
+    if smtp_host:
+        port = int(setting("smtp_port", "587") or 587)
+        username = setting("smtp_username", "").strip()
+        password = setting("smtp_password", "")
+        use_tls = setting("smtp_use_tls", "1").strip() not in {"0", "false", "False", "no"}
+        with smtplib.SMTP(smtp_host, port, timeout=15) as smtp:
+            if use_tls:
+                smtp.starttls()
+            if username:
+                smtp.login(username, password)
+            smtp.send_message(message)
+        return True
+
+    sendmail = shutil.which("sendmail")
+    if sendmail:
+        subprocess.run([sendmail, "-t", "-oi"], input=message.as_bytes(), check=True)
+        return True
+
+    app.logger.warning("Inquiry email was not sent: SMTP or sendmail is not configured.")
+    return False
+
+
 @app.context_processor
 def inject_globals():
     if not DB_PATH.exists():
@@ -187,6 +248,13 @@ def init_db():
             "address_az": "Azərbaycan, Bakı şəh., Sarayevo 12",
             "address_en": "Sarayevo 12, Baku, Azerbaijan",
             "whatsapp_number": "994XXXXXXXXX",
+            "notification_emails": "info@azimplantgroup.com",
+            "smtp_host": "",
+            "smtp_port": "587",
+            "smtp_username": "",
+            "smtp_password": "",
+            "smtp_from_email": "info@azimplantgroup.com",
+            "smtp_use_tls": "1",
             "instagram_url": "",
             "facebook_url": "",
             "linkedin_url": "",
@@ -306,17 +374,23 @@ def site(lang):
 @app.route("/inquiry", methods=["POST"])
 def inquiry():
     lang = request.form.get("lang", "az")
+    data = {
+        "first_name": request.form.get("first_name", "").strip(),
+        "last_name": request.form.get("last_name", "").strip(),
+        "email": request.form.get("email", "").strip(),
+        "phone": request.form.get("phone", "").strip(),
+        "message": request.form.get("message", "").strip(),
+    }
     db_execute(
         "insert into inquiries (first_name, last_name, email, phone, message) values (?, ?, ?, ?, ?)",
-        (
-            request.form.get("first_name", "").strip(),
-            request.form.get("last_name", "").strip(),
-            request.form.get("email", "").strip(),
-            request.form.get("phone", "").strip(),
-            request.form.get("message", "").strip(),
-        ),
+        (data["first_name"], data["last_name"], data["email"], data["phone"], data["message"]),
     )
-    flash("Müraciətiniz qeydə alındı.", "success")
+    try:
+        sent = send_inquiry_email(data)
+    except Exception as exc:
+        app.logger.exception("Inquiry email failed: %s", exc)
+        sent = False
+    flash("Müraciətiniz göndərildi." if sent else "Müraciətiniz qeydə alındı.", "success")
     return redirect(url_for("site", lang=lang) + "#contact")
 
 

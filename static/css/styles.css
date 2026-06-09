@@ -70,6 +70,24 @@ img { max-width: 100%; display: block; }
   align-items: stretch;
   border-bottom: 1px solid var(--line);
 }
+.public-flash-stack {
+  position: fixed;
+  top: 94px;
+  right: clamp(18px, 4vw, 64px);
+  z-index: 60;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 36px));
+}
+.public-flash {
+  padding: 14px 16px;
+  border: 1px solid rgba(223, 39, 52, .22);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-weight: 800;
+}
 .hero-media { min-height: 520px; background: var(--soft); overflow: hidden; }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
 .hero-content {
@@ -183,13 +201,22 @@ p { color: var(--muted); }
   height: 42px;
   border: 1px solid rgba(255,255,255,.18);
 }
-.contact-form {
+.contact-actions-panel {
+  display: grid;
+  gap: 16px;
+}
+.contact-form, .whatsapp-form {
   display: grid;
   gap: 16px;
   padding: clamp(22px, 4vw, 34px);
   background: #fff;
   border-radius: 8px;
   color: var(--ink);
+}
+.contact-form h3, .whatsapp-form h3 { color: var(--ink); }
+.contact-form p, .whatsapp-form p { margin: 0; color: var(--muted); }
+.whatsapp-form {
+  border: 1px solid rgba(223, 39, 52, .22);
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 label { display: grid; gap: 7px; color: #526066; font-weight: 700; font-size: 14px; }

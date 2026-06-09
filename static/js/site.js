@@ -16,11 +16,11 @@ window.addEventListener("DOMContentLoaded", () => {
   function buildWhatsAppUrl() {
     const data = new FormData(form);
     const text = [
-      "Az Implant Group müraciət",
+      "Az Implant Group muraciet",
       `Ad: ${data.get("first_name") || ""}`,
       `Soyad: ${data.get("last_name") || ""}`,
       `Email: ${data.get("email") || ""}`,
-      `Nömrə: ${data.get("phone") || ""}`,
+      `Nomre: ${data.get("phone") || ""}`,
       `Mesaj: ${data.get("message") || ""}`,
     ].join("\n");
     return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;

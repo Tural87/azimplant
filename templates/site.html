@@ -14,14 +14,16 @@
     'az': {
       'home':'Ana səhifə','about':'Haqqımızda','services':'Fəaliyyət','brands':'Brendlər','contact':'Əlaqə',
       'cta':'Müraciət et','whatsapp':'WhatsApp','learn':'Ətraflı','why':'Niyə biz?','partners':'Rəsmi brendlər',
-      'contact_title':'Bizimlə əlaqə','contact_text':'Məlumat almaq üçün formanı doldurun və ya WhatsApp ilə birbaşa yazın.',
+      'contact_title':'Bizimlə əlaqə','contact_text':'Məlumat almaq üçün mesaj formasını doldurun və ya ayrıca WhatsApp müraciəti göndərin.',
+      'message_title':'Mesaj göndər','whatsapp_title':'WhatsApp müraciəti','whatsapp_text':'Sürətli əlaqə üçün məlumatları doldurun və WhatsApp-a keçin.',
       'first':'Ad','last':'Soyad','email':'Email','phone':'Nömrə','message':'Mesaj','send':'Göndər',
       'wa_send':'WhatsApp-a yaz','admin':'Admin panel','all_rights':'Bütün hüquqlar qorunur'
     },
     'en': {
       'home':'Home','about':'About','services':'Activities','brands':'Brands','contact':'Contact',
       'cta':'Request info','whatsapp':'WhatsApp','learn':'Learn more','why':'Why us?','partners':'Official brands',
-      'contact_title':'Contact us','contact_text':'Fill the form or contact us directly through WhatsApp.',
+      'contact_title':'Contact us','contact_text':'Send a message through the form or use the separate WhatsApp request.',
+      'message_title':'Send a message','whatsapp_title':'WhatsApp request','whatsapp_text':'Fill your details and continue directly in WhatsApp.',
       'first':'First name','last':'Last name','email':'Email','phone':'Phone','message':'Message','send':'Send',
       'wa_send':'Send to WhatsApp','admin':'Admin panel','all_rights':'All rights reserved'
     }
@@ -46,6 +48,15 @@
   </header>
 
   <main id="home">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="public-flash-stack">
+          {% for category, message in messages %}
+            <div class="public-flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
     {% set hero = sections.hero %}
     <section class="hero">
       <div class="hero-media">
@@ -155,20 +166,34 @@
           {% endfor %}
         </div>
       </div>
-      <form class="contact-form" method="post" action="{{ url_for('inquiry') }}" data-wa-form data-wa-number="{{ site_settings.whatsapp_number }}">
-        <input type="hidden" name="lang" value="{{ lang }}">
-        <div class="form-row">
-          <label>{{ t.first }}<input required name="first_name" autocomplete="given-name"></label>
-          <label>{{ t.last }}<input required name="last_name" autocomplete="family-name"></label>
-        </div>
-        <label>{{ t.email }}<input required type="email" name="email" autocomplete="email"></label>
-        <label>{{ t.phone }}<input required name="phone" autocomplete="tel"></label>
-        <label>{{ t.message }}<textarea required name="message" rows="5"></textarea></label>
-        <div class="form-actions">
-          <button class="button primary" type="submit">{{ t.send }}</button>
+      <div class="contact-actions-panel">
+        <form class="contact-form" method="post" action="{{ url_for('inquiry') }}">
+          <input type="hidden" name="lang" value="{{ lang }}">
+          <h3>{{ t.message_title }}</h3>
+          <div class="form-row">
+            <label>{{ t.first }}<input required name="first_name" autocomplete="given-name"></label>
+            <label>{{ t.last }}<input required name="last_name" autocomplete="family-name"></label>
+          </div>
+          <label>{{ t.email }}<input required type="email" name="email" autocomplete="email"></label>
+          <label>{{ t.phone }}<input required name="phone" autocomplete="tel"></label>
+          <label>{{ t.message }}<textarea required name="message" rows="5"></textarea></label>
+          <div class="form-actions">
+            <button class="button primary" type="submit">{{ t.send }}</button>
+          </div>
+        </form>
+        <form class="whatsapp-form" data-wa-form data-wa-number="{{ site_settings.whatsapp_number }}">
+          <h3>{{ t.whatsapp_title }}</h3>
+          <p>{{ t.whatsapp_text }}</p>
+          <div class="form-row">
+            <label>{{ t.first }}<input required name="first_name" autocomplete="given-name"></label>
+            <label>{{ t.last }}<input required name="last_name" autocomplete="family-name"></label>
+          </div>
+          <label>{{ t.email }}<input type="email" name="email" autocomplete="email"></label>
+          <label>{{ t.phone }}<input required name="phone" autocomplete="tel"></label>
+          <label>{{ t.message }}<textarea name="message" rows="3"></textarea></label>
           <button class="button ghost" type="button" data-wa-submit><i data-lucide="message-circle"></i>{{ t.wa_send }}</button>
-        </div>
-      </form>
+        </form>
+      </div>
     </section>
   </main>
 

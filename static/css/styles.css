@@ -1,4 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
 :root {
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   --red: #df2734;
   --red-dark: #b91525;
   --ink: #30383d;
@@ -15,8 +18,9 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--white);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   line-height: 1.6;
+  font-weight: 500;
 }
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
@@ -82,12 +86,12 @@ img { max-width: 100%; display: block; }
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-h1, h2, h3 { margin: 0; line-height: 1.08; color: #263036; letter-spacing: 0; }
-h1 { max-width: 780px; font-size: clamp(42px, 6vw, 78px); }
-h2 { font-size: clamp(30px, 4vw, 50px); }
-h3 { font-size: 20px; }
+h1, h2, h3 { margin: 0; line-height: 1.08; color: #263036; letter-spacing: 0; font-weight: 800; }
+h1 { max-width: 780px; font-size: clamp(42px, 5.5vw, 74px); }
+h2 { font-size: clamp(30px, 3.8vw, 48px); }
+h3 { font-size: 20px; font-weight: 800; }
 p { color: var(--muted); }
-.lead { color: #455056; font-size: clamp(18px, 2vw, 23px); }
+.lead { color: #455056; font-size: clamp(18px, 2vw, 22px); font-weight: 600; }
 .hero-actions, .form-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .button {
   display: inline-flex;

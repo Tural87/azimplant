@@ -214,21 +214,21 @@ p { color: var(--muted); }
 
 .floating-whatsapp {
   position: fixed;
-  right: clamp(18px, 3vw, 32px);
+  left: clamp(18px, 3vw, 32px);
   bottom: clamp(18px, 3vw, 32px);
   z-index: 80;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 62px;
-  height: 62px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   background: #25d366;
   color: #fff;
-  box-shadow: 0 18px 42px rgba(37, 211, 102, .34);
+  box-shadow: 0 18px 42px rgba(37, 211, 102, .38), 0 0 0 8px rgba(37, 211, 102, .12);
 }
 .floating-whatsapp:hover { transform: translateY(-2px); }
-.floating-whatsapp svg { width: 30px; height: 30px; }
+.floating-whatsapp svg { width: 42px; height: 42px; fill: currentColor; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 label { display: grid; gap: 7px; color: #526066; font-weight: 700; font-size: 14px; }
 input, textarea {

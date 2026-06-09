@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import time
 from functools import wraps
 from pathlib import Path
 
@@ -104,96 +105,104 @@ def inject_globals():
 
 def init_db():
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = DB_PATH.with_suffix(".lock")
+    lock_fd = None
+    while lock_fd is None:
+        try:
+            lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            time.sleep(0.1)
     db = sqlite3.connect(DB_PATH)
-    db.row_factory = sqlite3.Row
-    schema = """
-    create table if not exists users (
-        id integer primary key autoincrement,
-        username text unique not null,
-        password_hash text not null,
-        role text not null default 'editor'
-    );
-    create table if not exists settings (
-        key text primary key,
-        value text not null default ''
-    );
-    create table if not exists sections (
-        id integer primary key autoincrement,
-        slug text unique not null,
-        title_az text not null,
-        title_en text not null,
-        subtitle_az text not null default '',
-        subtitle_en text not null default '',
-        body_az text not null default '',
-        body_en text not null default '',
-        image text not null default '',
-        sort_order integer not null default 0,
-        is_active integer not null default 1
-    );
-    create table if not exists cards (
-        id integer primary key autoincrement,
-        group_key text not null,
-        icon text not null default 'sparkles',
-        title_az text not null,
-        title_en text not null,
-        body_az text not null default '',
-        body_en text not null default '',
-        sort_order integer not null default 0,
-        is_active integer not null default 1
-    );
-    create table if not exists brands (
-        id integer primary key autoincrement,
-        name text not null,
-        description_az text not null default '',
-        description_en text not null default '',
-        url text not null default '',
-        logo text not null default '',
-        sort_order integer not null default 0,
-        is_active integer not null default 1
-    );
-    create table if not exists inquiries (
-        id integer primary key autoincrement,
-        first_name text not null,
-        last_name text not null,
-        email text not null,
-        phone text not null,
-        message text not null,
-        created_at text not null default current_timestamp
-    );
-    """
-    db.executescript(schema)
+    try:
+        db.row_factory = sqlite3.Row
+        schema = """
+        create table if not exists users (
+            id integer primary key autoincrement,
+            username text unique not null,
+            password_hash text not null,
+            role text not null default 'editor'
+        );
+        create table if not exists settings (
+            key text primary key,
+            value text not null default ''
+        );
+        create table if not exists sections (
+            id integer primary key autoincrement,
+            slug text unique not null,
+            title_az text not null,
+            title_en text not null,
+            subtitle_az text not null default '',
+            subtitle_en text not null default '',
+            body_az text not null default '',
+            body_en text not null default '',
+            image text not null default '',
+            sort_order integer not null default 0,
+            is_active integer not null default 1
+        );
+        create table if not exists cards (
+            id integer primary key autoincrement,
+            group_key text not null,
+            icon text not null default 'sparkles',
+            title_az text not null,
+            title_en text not null,
+            body_az text not null default '',
+            body_en text not null default '',
+            sort_order integer not null default 0,
+            is_active integer not null default 1
+        );
+        create table if not exists brands (
+            id integer primary key autoincrement,
+            name text not null,
+            description_az text not null default '',
+            description_en text not null default '',
+            url text not null default '',
+            logo text not null default '',
+            sort_order integer not null default 0,
+            is_active integer not null default 1
+        );
+        create table if not exists inquiries (
+            id integer primary key autoincrement,
+            first_name text not null,
+            last_name text not null,
+            email text not null,
+            phone text not null,
+            message text not null,
+            created_at text not null default current_timestamp
+        );
+        """
+        db.executescript(schema)
 
-    if not db.execute("select id from users where username = 'admin'").fetchone():
         db.execute(
-            "insert into users (username, password_hash, role) values (?, ?, ?)",
+            "insert or ignore into users (username, password_hash, role) values (?, ?, ?)",
             ("admin", generate_password_hash("admin123"), "superadmin"),
         )
 
-    default_settings = {
-        "site_name": "az implant group",
-        "tagline": "dental implant solutions",
-        "logo": "uploads/azimplant-logo-wide.jpeg",
-        "phone": "+994 XX XXX XX XX",
-        "email": "info@azimplantgroup.com",
-        "address_az": "Azərbaycan, Bakı şəh., Sarayevo 12",
-        "address_en": "Sarayevo 12, Baku, Azerbaijan",
-        "whatsapp_number": "994XXXXXXXXX",
-        "instagram_url": "",
-        "facebook_url": "",
-        "linkedin_url": "",
-        "youtube_url": "",
-        "tiktok_url": "",
-        "chat_script": "",
-        "seo_title_az": "Az Implant Group - Dental implant solutions",
-        "seo_title_en": "Az Implant Group - Dental implant solutions",
-        "seo_description_az": "Beynəlxalq sertifikatlı dental implant sistemləri, biomateriallar və peşəkar tibbi təhsil.",
-        "seo_description_en": "International certified dental implant systems, biomaterials and professional medical education.",
-    }
-    for key, value in default_settings.items():
-        db.execute("insert or ignore into settings (key, value) values (?, ?)", (key, value))
+        default_settings = {
+            "site_name": "az implant group",
+            "tagline": "dental implant solutions",
+            "logo": "uploads/azimplant-logo-wide.jpeg",
+            "phone": "+994 XX XXX XX XX",
+            "email": "info@azimplantgroup.com",
+            "address_az": "Azərbaycan, Bakı şəh., Sarayevo 12",
+            "address_en": "Sarayevo 12, Baku, Azerbaijan",
+            "whatsapp_number": "994XXXXXXXXX",
+            "instagram_url": "",
+            "facebook_url": "",
+            "linkedin_url": "",
+            "youtube_url": "",
+            "tiktok_url": "",
+            "chat_script": "",
+            "seo_title_az": "Az Implant Group - Dental implant solutions",
+            "seo_title_en": "Az Implant Group - Dental implant solutions",
+            "seo_description_az": "Beynəlxalq sertifikatlı dental implant sistemləri, biomateriallar və peşəkar tibbi təhsil.",
+            "seo_description_en": "International certified dental implant systems, biomaterials and professional medical education.",
+        }
+        for key, value in default_settings.items():
+            db.execute("insert or ignore into settings (key, value) values (?, ?)", (key, value))
 
-    if not db.execute("select id from sections").fetchone():
-        sections = [
+        if not db.execute("select id from sections").fetchone():
+            sections = [
             (
                 "hero",
                 "Qlobal implantologiya həlləri Azərbaycanda",
@@ -228,17 +237,17 @@ def init_db():
                 3,
             ),
         ]
-        db.executemany(
-            """
-            insert into sections
-            (slug, title_az, title_en, subtitle_az, subtitle_en, body_az, body_en, image, sort_order)
-            values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            sections,
-        )
+            db.executemany(
+                """
+                insert into sections
+                (slug, title_az, title_en, subtitle_az, subtitle_en, body_az, body_en, image, sort_order)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                sections,
+            )
 
-    if not db.execute("select id from cards").fetchone():
-        cards = [
+        if not db.execute("select id from cards").fetchone():
+            cards = [
             ("services", "badge-check", "Qlobal brendlərin rəsmi təchizatı", "Official supply of global brands", "Beynəlxalq sertifikatlı implant sistemləri, biomateriallar və cərrahi komponentlərin rəsmi təchizatı.", "Official supply of internationally certified implant systems, biomaterials and surgical components.", 1),
             ("services", "activity", "İmplantasiya əməliyyatlarının təşkili", "Implant surgery coordination", "Dövlət və özəl tibb mərkəzləri ilə tərəfdaşlıq çərçivəsində steril və təhlükəsiz təşkilat.", "Sterile and safe coordination through partnerships with public and private medical centers.", 2),
             ("services", "graduation-cap", "Peşəkar inkişaf və AzImplant Academy", "Professional development and AzImplant Academy", "Master-klasslar, praktiki kurslar və beynəlxalq spikerlərlə davamlı tibbi təhsil.", "Hands-on courses, masterclasses and continuing medical education with international speakers.", 3),
@@ -247,24 +256,31 @@ def init_db():
             ("why", "shield-check", "Yüksək akademik və texniki standartlar", "High academic and technical standards", "Kliniki əsaslandırılmış qlobal brendlər və rəqəmsal mühəndislik alətləri.", "Clinically grounded global brands and digital engineering tools.", 2),
             ("why", "handshake", "Güclü tərəfdaşlıq", "Strong partnerships", "Nüfuzlu tibb mərkəzləri və peşəkar həkim icması ilə əməkdaşlıq.", "Collaboration with respected medical centers and professional doctors.", 3),
         ]
-        db.executemany(
-            "insert into cards (group_key, icon, title_az, title_en, body_az, body_en, sort_order) values (?, ?, ?, ?, ?, ?, ?)",
-            cards,
-        )
+            db.executemany(
+                "insert into cards (group_key, icon, title_az, title_en, body_az, body_en, sort_order) values (?, ?, ?, ?, ?, ?, ?)",
+                cards,
+            )
 
-    if not db.execute("select id from brands").fetchone():
-        brands = [
+        if not db.execute("select id from brands").fetchone():
+            brands = [
             ("Macros Implant", "Yüksək keyfiyyət yanaşması ilə dental implant sistemləri.", "Dental implant systems with a strong quality approach.", "https://www.macrosimplant.com.tr/", "uploads/macros-logo.jpeg", 1),
             ("Orbone", "Türkiyənin FDA təsdiqli və EATCB üzvü olan hüceyrə və toxuma bankı.", "Turkey's FDA-approved and EATCB member cell and tissue bank.", "https://www.orbone.com.tr/en/", "uploads/orbone-logo.jpeg", 2),
             ("Maggi Biotechnology", "Rəqəmsal və biotexnoloji stomatologiya həlləri.", "Digital and biotechnology-driven dentistry solutions.", "https://en.dentalmaggi.com/", "uploads/maggi-logo.jpeg", 3),
         ]
-        db.executemany(
-            "insert into brands (name, description_az, description_en, url, logo, sort_order) values (?, ?, ?, ?, ?, ?)",
-            brands,
-        )
+            db.executemany(
+                "insert into brands (name, description_az, description_en, url, logo, sort_order) values (?, ?, ?, ?, ?, ?)",
+                brands,
+            )
 
-    db.commit()
-    db.close()
+        db.commit()
+    finally:
+        db.close()
+        if lock_fd is not None:
+            os.close(lock_fd)
+        try:
+            os.unlink(lock_path)
+        except FileNotFoundError:
+            pass
 
 
 def page_data(lang):

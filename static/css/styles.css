@@ -254,10 +254,13 @@ textarea { resize: vertical; }
 .footer-credit {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 10px 42px;
   padding-left: 0;
   max-width: 100%;
+  width: calc(100% - 98px);
 }
+.designer-credit { margin-left: auto; padding-right: 98px; }
 
 @media (max-width: 1040px) {
   .hero, .section-grid, .split, .contact-section { grid-template-columns: 1fr; }
@@ -285,5 +288,6 @@ textarea { resize: vertical; }
   .card-grid, .brand-grid, .form-row { grid-template-columns: 1fr; }
   .service-card { min-height: auto; }
   .footer { flex-direction: column; }
-  .footer-credit { padding-left: 0; gap: 8px 24px; }
+  .footer-credit { padding-left: 0; gap: 8px 24px; width: calc(100% - 86px); }
+  .designer-credit { margin-left: 0; padding-right: 0; }
 }

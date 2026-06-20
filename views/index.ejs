@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= content.site.title %> | <%= content.hero.subtitle %></title>
+<meta name="description" content="<%= content.site.title %> - dental implant solutions">
+<link rel="icon" href="/uploads/logo-icon.png">
+<link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="#home"><img src="/uploads/logo-icon.png" alt="<%= content.site.title %>"></a>
+  </div>
+  <nav>
+    <a href="#home" class="active">ana səhvə</a>
+    <a href="#about">haqqımızda</a>
+    <div class="dropdown">
+      <a href="#services" class="nav-item">fəaliyyət istiqamətlərimiz <span class="dropdown-caret">▾</span></a>
+      <div class="dropdown-menu">
+        <% content.menu.directions.forEach(function(d){ %>
+          <a href="<%= d.anchor %>"><%= d.label %></a>
+        <% }) %>
+      </div>
+    </div>
+    <a href="#contact">əlaqə</a>
+  </nav>
+</header>
+
+<section id="home" class="hero" style="background-image:url('<%= content.hero.image %>')">
+  <div class="hero-inner">
+    <h1><%= content.hero.title %></h1>
+    <p><%= content.hero.subtitle %></p>
+  </div>
+</section>
+
+<section id="about" class="about" style="background-image:url('<%= content.about.background %>')">
+  <div class="about-grid">
+    <div>
+      <h3><%= content.about.whoTitle %></h3>
+      <p><%= content.about.whoText %></p>
+    </div>
+    <div>
+      <h3><%= content.about.whyTitle %></h3>
+      <ol>
+        <% content.about.whyItems.forEach(function(item){ %>
+          <li><%= item %></li>
+        <% }) %>
+      </ol>
+    </div>
+    <div>
+      <h3><%= content.about.missionTitle %></h3>
+      <p><%= content.about.missionText %></p>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="services">
+  <div class="services-grid">
+    <% const icons = {tooth:'🦷', home:'🏠', graduation:'🎓', scan:'⚠️', plane:'✈️'}; %>
+    <% content.services.forEach(function(s){ %>
+      <div class="service-card">
+        <div class="service-icon"><%= icons[s.icon] || '🦷' %></div>
+        <h4><%= s.title %></h4>
+        <p><%= s.text %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<section class="partners">
+  <h3>Tərəfdaşlarımız</h3>
+  <div class="partners-row">
+    <% content.partners.forEach(function(p){ %>
+      <% if (p.url) { %>
+        <a href="<%= p.url %>" target="_blank" rel="noopener" class="partner-link">
+          <img src="<%= p.image %>" alt="<%= p.name %>" title="<%= p.name %>">
+        </a>
+      <% } else { %>
+        <img src="<%= p.image %>" alt="<%= p.name %>" title="<%= p.name %>">
+      <% } %>
+    <% }) %>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-top">
+    <h2>Bizimlə əlaqə saxlayın</h2>
+    <div class="contact-info">
+      <div class="contact-info-item">
+        <span class="ic">📞</span>
+        <div>
+          <div class="label">telefon</div>
+          <div class="val"><%= content.site.phone %></div>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <span class="ic">✉️</span>
+        <div>
+          <div class="label">email</div>
+          <div class="val"><%= content.site.email %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form-wrap">
+    <form class="contact-form" action="/contact" method="POST">
+      <% if (typeof sent !== 'undefined' && sent) { %>
+        <div class="sent-msg">Müraciətiniz göndərildi. Təşəkkür edirik!</div>
+      <% } %>
+      <input type="text" name="ad" placeholder="ad*" required>
+      <input type="text" name="soyad" placeholder="soyad*" required>
+      <input type="email" name="email" placeholder="email*" required>
+      <input type="tel" name="tel" placeholder="tel*" required>
+      <textarea name="mesaj" placeholder="mətn*" required></textarea>
+      <button type="submit">Göndər</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div><%= content.site.footer %></div>
+  <div class="icons">
+    <a href="mailto:<%= content.site.email %>">✉️</a>
+    <a href="tel:<%= content.site.phone %>">📞</a>
+    <a href="<%= content.site.instagram %>" target="_blank">📷</a>
+  </div>
+</footer>
+
+<script src="/public/js/main.js"></script>
+</body>
+</html>

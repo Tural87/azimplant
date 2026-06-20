@@ -1,47 +1,43 @@
-# Az Implant Group website
+# Az Implant Group — Sayt + Admin Panel
 
-Corporate AZ/EN website with Flask, SQLite and an editable admin panel.
+## Quraşdırma
+```
+npm install
+cp .env.example .env
+node scripts/hash-password.js sizinParolunuz
+```
+Çıxan `ADMIN_PASS_HASH` sətrini `.env` faylına yapışdırın.
 
-## Run
+## İşə salma
+```
+node server.js
+```
+- Sayt: http://localhost:3000
+- Admin panel: http://localhost:3000/admin (default: `admin` / `admin123` — MÜTLƏQ DƏYİŞİN!)
 
-```powershell
-cd C:\Users\Администратор\Documents\Codex\2026-06-02\files-mentioned-by-the-user-new\work\azimplant_site
-python run_server.py
+## .env ayarları
+- `SMTP_HOST/PORT/USER/PASS` — əlaqə formu mesajlarının e-poçtla göndərilməsi üçün (Gmail üçün "App Password" istifadə edin)
+- `MAIL_TO` — mesajların göndəriləcəyi email ünvanı
+- `ADMIN_USER` / `ADMIN_PASS_HASH` — admin giriş məlumatları
+
+## Struktur
+```
+server.js          → Express server, bütün route-lar
+db.js               → JSON-fayl əsaslı sadə "DB"
+data/content.json   → bütün sayt mətnləri/şəkil yolları (admin paneldən idarə olunur)
+data/messages.json  → əlaqə formundan gələn müraciətlər
+views/               → EJS şablonları (sayt + admin)
+public/              → CSS, JS, yüklənmiş şəkillər
+scripts/hash-password.js → admin parolu üçün bcrypt hash generator
 ```
 
-Public site:
+## Serverdə daimi işə salma (tövsiyə)
+```
+npm install -g pm2
+pm2 start server.js --name azimplant
+pm2 save
+pm2 startup
+```
 
-- http://127.0.0.1:5000/az
-- http://127.0.0.1:5000/en
-
-Admin:
-
-- http://127.0.0.1:5000/admin/login
-- Initial login: `admin`
-- Initial password: `admin123`
-
-Change the password from the admin panel before production use.
-
-## Production
-
-Deployment notes are in `DEPLOY.md`.
-
-Production entrypoints:
-
-- VPS / Gunicorn: `wsgi:application`
-- cPanel / Passenger: `passenger_wsgi.py`
-
-Important environment variables:
-
-- `AZIMPLANT_SECRET`
-- `AZIMPLANT_DB_PATH`
-- `AZIMPLANT_UPLOAD_DIR`
-
-## Editable areas
-
-- Site settings, contact data, WhatsApp number, social links and chat script
-- AZ/EN page sections
-- Activity and "Why us" cards
-- Brand cards and logos
-- Admin password and superadmin-created users
-- Incoming contact form submissions
+## GitHub-a yükləmə
+`.env` faylı `.gitignore`-dadır — repoya düşmür. Serverə köçürəndə `.env.example`-dən `.env` yaradıb öz məlumatlarınızı yazın.

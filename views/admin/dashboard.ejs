@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel — Az Implant Group</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; font-family: Arial, sans-serif; }
+  body { margin:0; background:#f0f1f3; }
+  .topbar { background:#1a1a1a; color:#fff; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; }
+  .topbar a { color:#fff; background:#e30613; padding:8px 16px; border-radius:4px; text-decoration:none; font-size:13px; }
+  .tabs { display:flex; gap:4px; background:#fff; padding:0 24px; border-bottom:1px solid #ddd; }
+  .tab-btn { padding:14px 18px; cursor:pointer; border:none; background:none; font-size:14px; font-weight:600; color:#666; border-bottom:3px solid transparent; }
+  .tab-btn.active { color:#e30613; border-bottom-color:#e30613; }
+  .tab-content { display:none; padding:24px; max-width:1100px; margin:0 auto; }
+  .tab-content.active { display:block; }
+  .card { background:#fff; border-radius:8px; padding:24px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  .card h3 { margin-top:0; color:#1a1a1a; border-left:4px solid #e30613; padding-left:10px; }
+  label { display:block; font-size:13px; font-weight:600; margin:12px 0 4px; color:#333; }
+  input[type=text], input[type=email], input[type=tel], input[type=password], textarea, select {
+    width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; font-size:14px;
+  }
+  textarea { min-height:80px; resize:vertical; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .btn { background:#e30613; color:#fff; border:none; padding:10px 22px; border-radius:4px; cursor:pointer; font-weight:600; margin-top:14px; }
+  .btn.secondary { background:#333; }
+  .btn.small { padding:6px 12px; font-size:12px; }
+  .saved-msg { background:#d4edda; color:#155724; padding:10px 16px; border-radius:4px; margin-bottom:16px; }
+  .service-item, .partner-item { border:1px solid #eee; padding:14px; border-radius:6px; margin-bottom:12px; position:relative; }
+  .partner-item img { height:40px; margin-top:6px; }
+  .del-btn { position:absolute; top:10px; right:10px; background:#999; color:#fff; border:none; border-radius:4px; padding:4px 10px; cursor:pointer; font-size:12px; }
+  table { width:100%; border-collapse:collapse; }
+  table th, table td { padding:10px; border-bottom:1px solid #eee; font-size:13px; text-align:left; }
+  .hint { font-size:12px; color:#888; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <strong>Az Implant Group — Admin Panel</strong>
+  <a href="/admin/logout">Çıxış</a>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="general">Ümumi / Hero / Haqqımızda</button>
+  <button class="tab-btn" data-tab="services">Fəaliyyət İstiqamətləri</button>
+  <button class="tab-btn" data-tab="partners">Tərəfdaşlar</button>
+  <button class="tab-btn" data-tab="messages">Müraciətlər (<%= messages.length %>)</button>
+  <button class="tab-btn" data-tab="settings">Parol</button>
+</div>
+
+<% if (saved) { %>
+  <div style="max-width:1100px;margin:16px auto 0;"><div class="saved-msg">✅ Yadda saxlanıldı.</div></div>
+<% } %>
+
+<!-- GENERAL TAB -->
+<div class="tab-content active" id="general">
+  <form class="card" method="POST" action="/admin/content" enctype="multipart/form-data">
+    <h3>Sayt Ümumi Məlumatları</h3>
+    <div class="row">
+      <div><label>Sayt başlığı</label><input type="text" name="siteTitle" value="<%= content.site.title %>"></div>
+      <div><label>Footer mətni</label><input type="text" name="siteFooter" value="<%= content.site.footer %>"></div>
+    </div>
+    <div class="row">
+      <div><label>Telefon</label><input type="text" name="sitePhone" value="<%= content.site.phone %>"></div>
+      <div><label>Email</label><input type="text" name="siteEmail" value="<%= content.site.email %>"></div>
+    </div>
+    <label>Instagram linki</label>
+    <input type="text" name="siteInstagram" value="<%= content.site.instagram %>">
+
+    <h3 style="margin-top:30px;">Hero (Ana Banner)</h3>
+    <div class="row">
+      <div><label>Başlıq</label><input type="text" name="heroTitle" value="<%= content.hero.title %>"></div>
+      <div><label>Alt başlıq</label><input type="text" name="heroSubtitle" value="<%= content.hero.subtitle %>"></div>
+    </div>
+    <label>Hero fon şəkli (dəyişmək üçün yeni şəkil seçin)</label>
+    <input type="file" name="heroImage" accept="image/*">
+    <div class="hint">Mövcud: <%= content.hero.image %></div>
+
+    <h3 style="margin-top:30px;">Haqqımızda Bölməsi</h3>
+    <label>Fon şəkli (dəyişmək üçün)</label>
+    <input type="file" name="aboutBg" accept="image/*">
+    <div class="hint">Mövcud: <%= content.about.background %></div>
+
+    <div class="row">
+      <div>
+        <label>"Biz Kimik?" başlıq</label>
+        <input type="text" name="whoTitle" value="<%= content.about.whoTitle %>">
+        <label>"Biz Kimik?" mətn</label>
+        <textarea name="whoText"><%= content.about.whoText %></textarea>
+      </div>
+      <div>
+        <label>"Niyə biz?" başlıq</label>
+        <input type="text" name="whyTitle" value="<%= content.about.whyTitle %>">
+        <label>"Niyə biz?" bəndləri (hər sətir 1 bənd)</label>
+        <textarea name="whyItems"><%= content.about.whyItems.join('\n') %></textarea>
+      </div>
+    </div>
+    <label>"Missiyamız" başlıq</label>
+    <input type="text" name="missionTitle" value="<%= content.about.missionTitle %>">
+    <label>"Missiyamız" mətn</label>
+    <textarea name="missionText"><%= content.about.missionText %></textarea>
+
+    <button class="btn" type="submit">Yadda saxla</button>
+  </form>
+</div>
+
+<!-- SERVICES TAB -->
+<div class="tab-content" id="services">
+  <form class="card" method="POST" action="/admin/services">
+    <h3>Fəaliyyət İstiqamətləri (kartlar)</h3>
+    <% content.services.forEach(function(s, i){ %>
+      <div class="service-item">
+        <label>İkon</label>
+        <select name="serviceIcon">
+          <option value="tooth" <%= s.icon==='tooth'?'selected':'' %>>🦷 Diş</option>
+          <option value="home" <%= s.icon==='home'?'selected':'' %>>🏠 Ev</option>
+          <option value="graduation" <%= s.icon==='graduation'?'selected':'' %>>🎓 Akademik</option>
+          <option value="scan" <%= s.icon==='scan'?'selected':'' %>>⚠️ Skan</option>
+          <option value="plane" <%= s.icon==='plane'?'selected':'' %>>✈️ Təyyarə</option>
+        </select>
+        <label>Başlıq</label>
+        <input type="text" name="serviceTitle" value="<%= s.title %>">
+        <label>Mətn</label>
+        <textarea name="serviceText"><%= s.text %></textarea>
+      </div>
+    <% }) %>
+    <button class="btn" type="submit">Hamısını yadda saxla</button>
+    <div class="hint">Qeyd: Kart sayını dəyişmək üçün serverdə data/content.json faylına birbaşa kart əlavə/silmək lazımdır, yaxud bizdən tələb edin.</div>
+  </form>
+</div>
+
+<!-- PARTNERS TAB -->
+<div class="tab-content" id="partners">
+  <form class="card" method="POST" action="/admin/partners" enctype="multipart/form-data">
+    <h3>Tərəfdaş Loqoları</h3>
+    <% content.partners.forEach(function(p, i){ %>
+      <div class="partner-item">
+        <input type="hidden" name="partnerExisting" value="<%= p.image %>">
+        <img src="<%= p.image %>" alt="<%= p.name %>"><br>
+        <label>Ad</label>
+        <input type="text" name="partnerName" value="<%= p.name %>">
+        <label>
+          <input type="checkbox" name="partnerNewFlag" value="1" style="width:auto;display:inline-block;">
+          Yeni şəkil yüklə
+        </label>
+        <input type="file" name="partnerImage" accept="image/*">
+        <button class="del-btn" type="button" onclick="deletePartner(<%= i %>)">Sil</button>
+      </div>
+    <% }) %>
+    <button class="btn" type="submit">Dəyişiklikləri yadda saxla</button>
+  </form>
+
+  <form class="card" method="POST" action="/admin/partners/add" enctype="multipart/form-data">
+    <h3>Yeni Tərəfdaş Əlavə Et</h3>
+    <label>Ad</label>
+    <input type="text" name="newPartnerName" required>
+    <label>Loqo şəkli</label>
+    <input type="file" name="newPartnerImage" accept="image/*" required>
+    <button class="btn secondary" type="submit">Əlavə et</button>
+  </form>
+
+  <form id="deleteForm" method="POST" action="">
+  </form>
+</div>
+
+<!-- MESSAGES TAB -->
+<div class="tab-content" id="messages">
+  <div class="card">
+    <h3>Əlaqə Formundan Gələn Müraciətlər</h3>
+    <table>
+      <thead><tr><th>Tarix</th><th>Ad Soyad</th><th>Email</th><th>Tel</th><th>Mətn</th><th></th></tr></thead>
+      <tbody>
+        <% messages.forEach(function(m){ %>
+          <tr>
+            <td><%= new Date(m.date).toLocaleString('az-AZ') %></td>
+            <td><%= m.ad %> <%= m.soyad %></td>
+            <td><%= m.email %></td>
+            <td><%= m.tel %></td>
+            <td><%= m.mesaj %></td>
+            <td>
+              <form method="POST" action="/admin/messages/delete/<%= m.id %>">
+                <button class="btn small" type="submit">Sil</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (messages.length === 0) { %>
+          <tr><td colspan="6">Hələ müraciət yoxdur.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SETTINGS TAB -->
+<div class="tab-content" id="settings">
+  <form class="card" method="POST" action="/admin/change-password">
+    <h3>Admin Parolunu Dəyiş</h3>
+    <label>Yeni parol</label>
+    <input type="password" name="newPassword" minlength="4" required>
+    <button class="btn" type="submit">Parolu Yenilə</button>
+  </form>
+</div>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+  function deletePartner(idx) {
+    if (!confirm('Bu tərəfdaşı silmək istəyirsiniz?')) return;
+    const f = document.getElementById('deleteForm');
+    f.action = '/admin/partners/delete/' + idx;
+    f.submit();
+  }
+</script>
+
+</body>
+</html>
